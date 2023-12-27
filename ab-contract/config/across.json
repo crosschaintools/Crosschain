@@ -1,0 +1,38 @@
+{
+  "mainnet": {
+    "acrossSpokePool": "0x5c7BCd6E7De5423a257D81B442095A1a6ced35C5",
+    "weth": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+  },
+  "arbitrum": {
+    "acrossSpokePool": "0xe35e9842fceaca96570b734083f4a58e8f7c5f2a",
+    "weth": "0x82aF49447D8a07e3bd95BD0d56f35241523fBab1"
+  },
+  "base": {
+    "acrossSpokePool": "0x09aea4b2242abC8bb4BB78D537A67a245A7bEC64",
+    "weth": "0x4200000000000000000000000000000000000006"
+  },
+  "optimism": {
+    "acrossSpokePool": "0x6f26Bf09B1C792e3228e5467807a900A503c0281",
+    "weth": "0x4200000000000000000000000000000000000006"
+  },
+  "polygon": {
+    "acrossSpokePool": "0x9295ee1d8C5b022Be115A2AD3c30C72E34e7F096",
+    "weth": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
+  },
+  "goerli": {
+    "acrossSpokePool": "0xEc88d3C08E2939562Ff8188B4e30A52236C3FF09",
+    "weth": "0xB4FBF271143F4FBf7B91A5ded31805e42b2208d6"
+  },
+  "arbitrumTestnet": {
+    "acrossSpokePool": "0x3baD7AD0728f9917d1Bf08af5782dCbD516cDd96",
+    "weth": "0xe39Ab88f8A4777030A534146A9Ca3B52bd5D43A3"
+  },
+  "mumbai": {
+    "acrossSpokePool": "0x45fF03629D024b7763275e732a2d80202c18b31C",
+    "weth": "0x9c3C9283D3e44854697Cd22D3Faa240Cfb032889"
+  },
+  "zksync": {
+    "acrossSpokePool": "0xE0B015E54d54fc84a6cB9B666099c46adE9335FF",
+    "weth": "0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2"
+  }
+}
