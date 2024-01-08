@@ -28,4 +28,5 @@ lcov.info
 
 test/logs
 package-lock.json
+.env
 
