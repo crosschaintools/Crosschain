@@ -11,11 +11,11 @@ const msg = (msg: string) => {
 // Test process
 
 // Bridge Non-Native Asset
-// Approve USDC for LiFiDiamond for swapping
+// Approve USDC for Diamond for swapping
 // Swap USDC -> TestToken via uniswap on Goerli
 // Bridge TestToken on Goerli -> TestToken on Optimism Goerli via Connext Amarok
 
-const LIFI_ADDRESS = '0x9DD11f4fc672006EA9E666b6a222C5A8141f2Ac0' // LiFiDiamond address on Goerli
+const Diamond_ADDRESS = '0x9DD11f4fc672006EA9E666b6a222C5A8141f2Ac0' // Diamond address on Goerli
 const GOERLI_TOKEN_ADDRESS = '0x7ea6eA49B0b0Ae9c5db7907d139D9Cd3439862a1' // TestToken address on Goerli
 const OPTIMISM_GOERLI_TOKEN_ADDRESS =
   '0x68Db1c8d85C09d546097C65ec7DCBFF4D6497CbF' // TestToken address on Optimism Goerli
@@ -35,7 +35,7 @@ async function main() {
   wallet = wallet.connect(srcChainProvider)
   const walletAddress = await wallet.getAddress()
 
-  const lifi = AmarokFacet__factory.connect(LIFI_ADDRESS, wallet)
+  const diamond = AmarokFacet__factory.connect(Diamond_ADDRESS, wallet)
 
   const token = ERC20__factory.connect(GOERLI_USDC_ADDRESS, wallet)
 
@@ -45,7 +45,7 @@ async function main() {
   ])
 
   const path = [GOERLI_USDC_ADDRESS, GOERLI_TOKEN_ADDRESS]
-  const to = LIFI_ADDRESS // should be a checksummed recipient address
+  const to = Diamond_ADDRESS // should be a checksummed recipient address
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
 
   const swapData = await uniswap.populateTransaction.swapTokensForExactTokens(
@@ -56,8 +56,8 @@ async function main() {
     deadline
   )
 
-  // LIFI Data
-  const lifiData = {
+  // Diamond Data
+  const diamondData = {
     transactionId: utils.randomBytes(32),
     integrator: 'ACME Devs',
     referrer: constants.AddressZero,
@@ -87,16 +87,16 @@ async function main() {
   }
 
   // Approve ERC20 for swapping -- USDC -> TestToken
-  const allowance = await token.allowance(walletAddress, LIFI_ADDRESS)
+  const allowance = await token.allowance(walletAddress, Diamond_ADDRESS)
   if (amountIn.gt(allowance)) {
-    await token.approve(lifi.address, amountIn)
+    await token.approve(diamond.address, amountIn)
 
     msg('Token approved for swapping')
   }
 
-  // Call LiFi smart contract to start the bridge process -- WITH SWAP
-  await lifi.swapAndStartBridgeTokensViaAmarok(
-    lifiData,
+  // Call Diamond smart contract to start the bridge process -- WITH SWAP
+  await diamond.swapAndStartBridgeTokensViaAmarok(
+    diamondData,
     [
       {
         callTo: <string>swapData.to,

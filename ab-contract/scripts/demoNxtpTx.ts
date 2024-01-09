@@ -15,7 +15,7 @@ const msg = (msg: string) => {
 const WITH_SWAP = true
 const WITH_RECEIVER = false
 
-const LIFI_ADDRESS = deployment[100].xdai.contracts.LiFiDiamond.address
+const Diamond_ADDRESS = deployment[100].xdai.contracts.Diamond.address
 const RINKEBY_DAI_ADDRESS = '0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735'
 const RINKEBY_TOKEN_ADDRESS = '0x9aC2c46d7AcC21c881154D57c0Dc1c55a3139198'
 const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
@@ -29,7 +29,7 @@ async function main() {
   const provider = new providers.FallbackProvider([provider1])
   wallet = wallet.connect(provider)
 
-  const lifi = NXTPFacet__factory.connect(LIFI_ADDRESS, wallet)
+  const diamond = NXTPFacet__factory.connect(Diamond_ADDRESS, wallet)
 
   // Uniswap
   const TOKEN = new Token(ChainId.RINKEBY, RINKEBY_TOKEN_ADDRESS, 18)
@@ -39,7 +39,7 @@ async function main() {
   const amountOut = utils.parseEther('10') // 10 TestToken
 
   const path = [DAI.address, TOKEN.address]
-  const to = LIFI_ADDRESS // should be a checksummed recipient address
+  const to = Diamond_ADDRESS // should be a checksummed recipient address
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
 
   const uniswap = new Contract(
@@ -80,13 +80,13 @@ async function main() {
     receivingAddress: await wallet.getAddress(),
     amount: amountOut.toString(),
     expiry: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 3, // 3 days
-    initiator: lifi.address,
+    initiator: diamond.address,
     dryRun: WITH_RECEIVER,
   })
 
   msg('Quote received from Connext')
 
-  const lifiData = {
+  const diamondData = {
     transactionId: quote.bid.transactionId,
     integrator: 'ACME Devs',
     referrer: constants.AddressZero,
@@ -99,8 +99,8 @@ async function main() {
 
   if (WITH_RECEIVER) {
     // Generate calldata for receiving chain
-    const tmpTx = await lifi.populateTransaction.completeBridgeTokensViaNXTP(
-      lifiData,
+    const tmpTx = await diamond.populateTransaction.completeBridgeTokensViaNXTP(
+      diamondData,
       GOERLI_TOKEN_ADDRESS,
       await wallet.getAddress(),
       quote.bid.amountReceived
@@ -116,7 +116,7 @@ async function main() {
       receivingAddress: await wallet.getAddress(),
       amount: amountOut.toString(),
       expiry: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 3, // 3 days
-      initiator: lifi.address,
+      initiator: diamond.address,
       callData: tmpTx.data,
       callTo: tmpTx.to,
     })
@@ -150,13 +150,13 @@ async function main() {
 
     // Approve ERC20 for swapping -- DAI
     const token = ERC20__factory.connect(DAI.address, wallet)
-    await token.approve(lifi.address, amountIn)
+    await token.approve(diamond.address, amountIn)
 
     msg('Token approved for swapping')
 
-    // Call LiFi smart contract to start the bridge process -- WITH SWAP
-    await lifi.swapAndStartBridgeTokensViaNXTP(
-      lifiData,
+    // Call Diamond smart contract to start the bridge process -- WITH SWAP
+    await diamond.swapAndStartBridgeTokensViaNXTP(
+      diamondData,
       [
         {
           sendingAssetId: DAI.address,
@@ -172,10 +172,10 @@ async function main() {
   } else {
     // Approve ERC20 for swapping -- TEST
     const token = ERC20__factory.connect(TOKEN.address, wallet)
-    await token.approve(lifi.address, amountOut)
+    await token.approve(diamond.address, amountOut)
 
-    // Call LiFi smart contract to start the bridge process -- WITHOUT SWAP
-    await lifi.startBridgeTokensViaNXTP(lifiData, nxtpData, {
+    // Call Diamond smart contract to start the bridge process -- WITHOUT SWAP
+    await diamond.startBridgeTokensViaNXTP(diamondData, nxtpData, {
       gasLimit: 500000,
     })
   }

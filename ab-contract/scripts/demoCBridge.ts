@@ -8,7 +8,7 @@ const msg = (msg: string) => {
   console.log(chalk.green(msg))
 }
 
-const LIFI_ADDRESS = deployment[100].xdai.contracts.LiFiDiamond.address
+const Diamond_ADDRESS = deployment[100].xdai.contracts.Diamond.address
 const destinationChainId = 56
 const MAX_SLIPPAGE = 1000000
 
@@ -24,13 +24,13 @@ async function main() {
   const provider = new providers.FallbackProvider([provider1])
   wallet = wallet.connect(provider)
 
-  const lifi = CBridgeFacet__factory.connect(LIFI_ADDRESS, wallet)
-  console.log('ADDRESS', lifi.address)
+  const diamond = CBridgeFacet__factory.connect(Diamond_ADDRESS, wallet)
+  console.log('ADDRESS', diamond.address)
   const amountIn = '25000000'
   const amountOut = '20000010'
 
   const path = [POLYGON_USDC_ADDRESS, POLYGON_USDT_ADDRESS]
-  const to = LIFI_ADDRESS // should be a checksummed recipient address
+  const to = Diamond_ADDRESS // should be a checksummed recipient address
   const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
 
   const uniswap = new Contract(
@@ -42,9 +42,9 @@ async function main() {
   )
 
   const token = ERC20__factory.connect(POLYGON_USDC_ADDRESS, wallet)
-  await token.approve(lifi.address, amountOut)
+  await token.approve(diamond.address, amountOut)
 
-  const lifiData = {
+  const diamondData = {
     transactionId: utils.randomBytes(32),
     integrator: 'ACME Devs',
     referrer: constants.AddressZero,
@@ -65,7 +65,7 @@ async function main() {
 
   // Test for startBridgeTokensViaCBridge
 
-  await lifi.startBridgeTokensViaCBridge(lifiData, CBridgeData, {
+  await diamond.startBridgeTokensViaCBridge(diamondData, CBridgeData, {
     gasLimit: 500000,
   })
 
@@ -81,7 +81,7 @@ async function main() {
   )
 
   // Approve ERC20 for swapping -- USDT
-  await token.approve(lifi.address, amountOut)
+  await token.approve(diamond.address, amountOut)
 
   msg('Token approved for swapping')
 
@@ -94,9 +94,9 @@ async function main() {
     maxSlippage: MAX_SLIPPAGE,
   }
 
-  // Call LiFi smart contract to start the bridge process -- WITH SWAP
-  await lifi.swapAndStartBridgeTokensViaCBridge(
-    lifiData,
+  // Call Diamond smart contract to start the bridge process -- WITH SWAP
+  await diamond.swapAndStartBridgeTokensViaCBridge(
+    diamondData,
     [
       {
         sendingAssetId: POLYGON_USDC_ADDRESS,

@@ -7,7 +7,7 @@ const msg = (msg: string) => {
   console.log(chalk.green(msg))
 }
 
-const LIFI_ADDRESS = '0x1D7554F2EF87Faf41f9c678cF2501497D38c014f'
+const Diamond_ADDRESS = '0x1D7554F2EF87Faf41f9c678cF2501497D38c014f'
 const DAI_ADDRESS = '0x6B175474E89094C44Da98b954EedeAC495271d0F'
 const USDC_ADDRESS = '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48'
 const UNISWAP_ADDRESS = '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D'
@@ -25,12 +25,12 @@ async function main() {
   wallet = wallet.connect(provider)
   const walletAddress = await wallet.getAddress()
 
-  const lifi = RoninBridgeFacet__factory.connect(LIFI_ADDRESS, wallet)
+  const diamond = RoninBridgeFacet__factory.connect(Diamond_ADDRESS, wallet)
 
   // Swap and Bridge Non-Native Asset
   {
     const path = [DAI_ADDRESS, USDC_ADDRESS]
-    const to = LIFI_ADDRESS // should be a checksummed recipient address
+    const to = Diamond_ADDRESS // should be a checksummed recipient address
     const deadline = Math.floor(Date.now() / 1000) + 60 * 20 // 20 minutes from the current Unix time
 
     const uniswap = new Contract(
@@ -78,15 +78,15 @@ async function main() {
 
     // Approve ERC20 for swapping -- DAI -> USDC
     const dai = ERC20__factory.connect(DAI_ADDRESS, wallet)
-    const allowance = await dai.allowance(walletAddress, LIFI_ADDRESS)
+    const allowance = await dai.allowance(walletAddress, Diamond_ADDRESS)
     if (amountIn.gt(allowance)) {
-      await dai.approve(LIFI_ADDRESS, amountIn)
+      await dai.approve(Diamond_ADDRESS, amountIn)
 
       msg('Token approved for swapping')
     }
 
-    // Call LiFi smart contract to start the bridge process -- WITH SWAP
-    await lifi.swapAndStartBridgeTokensViaRoninBridge(bridgeData, swapData, {
+    // Call Diamond smart contract to start the bridge process -- WITH SWAP
+    await diamond.swapAndStartBridgeTokensViaRoninBridge(bridgeData, swapData, {
       gasLimit: 500000,
     })
   }
@@ -107,8 +107,8 @@ async function main() {
       hasDestinationCall: false,
     }
 
-    // Call LiFi smart contract to start the bridge process
-    await lifi.startBridgeTokensViaRoninBridge(bridgeData, {
+    // Call Diamond smart contract to start the bridge process
+    await diamond.startBridgeTokensViaRoninBridge(bridgeData, {
       value: amount,
       gasLimit: 500000,
     })

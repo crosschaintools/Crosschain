@@ -1,5 +1,5 @@
 import deployments from '../deployments/mainnet.staging.json'
-import { ThorSwapFacet__factory, ILiFi, ThorSwapFacet, ERC20__factory } from '../typechain'
+import { ThorSwapFacet__factory, IApp, ThorSwapFacet, ERC20__factory } from '../typechain'
 import { ethers, utils } from 'ethers'
 import dotenv from 'dotenv'
 dotenv.config()
@@ -7,11 +7,11 @@ dotenv.config()
 const main = async () => {
   const RPC_URL = process.env.ETH_NODE_URI_MAINNET
   const PRIVATE_KEY = process.env.PRIVATE_KEY
-  const LIFI_ADDRESS = deployments.LiFiDiamond
+  const Diamond_ADDRESS = deployments.Diamond
 
   const provider = new ethers.providers.JsonRpcProvider(RPC_URL)
   const signer = new ethers.Wallet(PRIVATE_KEY as string, provider)
-  const thorSwapFacet = ThorSwapFacet__factory.connect(LIFI_ADDRESS, provider)
+  const thorSwapFacet = ThorSwapFacet__factory.connect(Diamond_ADDRESS, provider)
 
   let resp
   let quote
@@ -25,7 +25,7 @@ const main = async () => {
 
   const token = ERC20__factory.connect(route.calldata.assetAddress, provider)
 
-  const bridgeData: ILiFi.BridgeDataStruct = {
+  const bridgeData: IApp.BridgeDataStruct = {
     transactionId: utils.randomBytes(32),
     bridge: 'ThorSwap',
     integrator: 'ACME Devs',
@@ -45,7 +45,7 @@ const main = async () => {
   }
 
 
-  tx = await token.connect(signer).approve(LIFI_ADDRESS, route.calldata.amountIn)
+  tx = await token.connect(signer).approve(Diamond_ADDRESS, route.calldata.amountIn)
   await tx.wait()
   tx = await thorSwapFacet.connect(signer).startBridgeTokensViaThorSwap(bridgeData, thorSwapData)
   await tx.wait()
