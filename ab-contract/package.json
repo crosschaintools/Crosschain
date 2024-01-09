@@ -1,12 +1,12 @@
 {
-  "name": "lifi-contracts",
+  "name": "Crosschain",
   "version": "0.1.0",
-  "description": "LI.FI is a cross-chain bridge aggregation protocol",
+  "description": "Crosschain is a cross-chain bridge aggregation protocol",
   "engines": {
     "node": ">= 12.18.0"
   },
-  "repository": "github:lifinance/contracts",
-  "author": "LI.FI",
+  "repository": "https://github.com/crosschaintools/Crosschain",
+  "author": "Crosschain",
   "license": "MIT",
   "keywords": [
     "ethereum",
