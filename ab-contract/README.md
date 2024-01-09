@@ -191,4 +191,3 @@ yarn test
 ## More Information<a name="more-information"></a>
 
 - [Website](https://www.crosschain.tools/home)
-- [General Documentation](https://www.crosschain.tools/home)
